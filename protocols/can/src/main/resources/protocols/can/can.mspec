@@ -18,22 +18,19 @@
  */
 
 [type 'CANFrame'
+    [simple CANHeader 'header']
     [simple uint 11 'identifier']
-    [simple bit 'remoteTransmissionRequest']
-    [discriminator bit 'extended']
-    [typeSwitch 'extended'
-        ['false' CANDataFrame
-            [reserved uint 1 '0x0']
-        ]
-        ['true' ExtendedCANFrame
-            [simple uint 18 'extensionId']
-            [simple bit 'extensionRemoteTransmissionRequest']
-            [reserved uint 2 '0x0']
-        ]
-    ]
-    [simple uint 4 'length']
-    [array uint 8 'data' count 'length']
-    [simple uint 15 'crc']
+    [simple bit 'extended']
+    [simple bit 'remote']
+    [simple bit 'error']
+]
+
+[type 'CANHeader'
+    [simple uint 11 'identifier']
+    [simple bit 'extended']
+    [simple bit 'remote']
+    [simple bit 'error']
+
 ]
 
 /* These are structures defined in linux kernel, provided here just for information purposes
@@ -55,23 +52,39 @@ struct canfd_frame {
 };
 */
 
+[type 'OtherSocketCANFrame'
+    [simple int 32 'rawId']
+    [virtual bit 'extended'
+        'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isRemote", rawId)'
+    ]
+    [virtual bit 'remote'
+        'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isRemote", rawId)'
+    ]
+    [virtual bit 'error'
+        'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isError", rawId)'
+    ]
+//    [typeSwitch 'extended'
+//        ['true' ExtendedOtherSocketCanFrame
+//            [simple uint 8 'flags']
+//        ]
+//        ['false' ExtendedOtherSocketCanFrame
+            [reserved uint 8 '0x0']
+//        ]
+//    ]
+    [reserved uint 8 '0x0']
+    [reserved uint 8 '0x0']
+    [implicit uint 8 'size' 'COUNT(data)']
+    [array int 8 'data' COUNT 'size']
+]
+
 [type 'SocketCANFrame'
-    [simple uint 29 'identifier']
     [simple bit 'extended']
     [simple bit 'remote']
     [simple bit 'error']
-    [implicit uint 8 'length' 'ARRAY_SIZE_IN_BYTES(data)']
-    [typeSwitch 'extended', 'identifier'
-        ['true' SocketCANFDFrame
-            [simple uint 8 'flags']
-            [reserved uint 8 '0x0']
-            [reserved uint 8 '0x0']
-        ]
-        ['false' ScoketCANFrame
-            [reserved uint 8 '0x0']
-            [reserved uint 8 '0x0']
-            [reserved uint 8 '0x0']
-        ]
-    ]
+    [simple uint 29 'identifier']
+    [implicit uint 8 'length' 'COUNT(data)']
+    [reserved uint 8 '0x0'] // flags
+    [reserved uint 8 '0x0'] // padding
+    [reserved uint 8 '0x0'] // padding
     [array int 8 'data' COUNT 'length']
 ]

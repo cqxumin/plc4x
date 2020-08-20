@@ -20,22 +20,17 @@ package org.apache.plc4x.java.can;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
-import org.apache.plc4x.java.PlcDriverManager;
-import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.can.configuration.CANConfiguration;
 import org.apache.plc4x.java.can.context.CANDriverContext;
 import org.apache.plc4x.java.can.field.CANFieldHandler;
 import org.apache.plc4x.java.can.protocol.CANProtocolLogic;
-import org.apache.plc4x.java.can.readwrite.CANFrame;
 import org.apache.plc4x.java.can.readwrite.SocketCANFrame;
-import org.apache.plc4x.java.can.readwrite.io.CANFrameIO;
 import org.apache.plc4x.java.can.readwrite.io.SocketCANFrameIO;
 import org.apache.plc4x.java.spi.configuration.Configuration;
 import org.apache.plc4x.java.spi.connection.GeneratedDriverBase;
 import org.apache.plc4x.java.spi.connection.ProtocolStackConfigurer;
 import org.apache.plc4x.java.spi.connection.SingleProtocolStackConfigurer;
 import tel.schich.javacan.CanFrame;
-import tel.schich.javacan.CanId;
 
 import java.util.function.Consumer;
 import java.util.function.ToIntFunction;
@@ -83,9 +78,14 @@ public class CANPlcDriver extends GeneratedDriverBase<SocketCANFrame> {
         @Override
         public int applyAsInt(ByteBuf byteBuf) {
             if (byteBuf.readableBytes() >= 5) {
+
                 System.out.println(ByteBufUtil.prettyHexDump(byteBuf));
                 byte len = byteBuf.getByte(4);
                 System.out.println("Length " + (int) len);
+
+                CanFrame frame = CanFrame.create(byteBuf.nioBuffer());
+                System.out.println(frame);
+
                 return len + 8 /* overhead */;
             }
             return -1; //discard
