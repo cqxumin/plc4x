@@ -52,7 +52,7 @@ struct canfd_frame {
 };
 */
 
-[type 'OtherSocketCANFrame'
+[type 'SocketCANFrame'
     [simple int 32 'rawId']
     [virtual bit 'extended'
         'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isRemote", rawId)'
@@ -63,6 +63,7 @@ struct canfd_frame {
     [virtual bit 'error'
         'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isError", rawId)'
     ]
+    [implicit uint 8 'size' 'COUNT(data)']
 //    [typeSwitch 'extended'
 //        ['true' ExtendedOtherSocketCanFrame
 //            [simple uint 8 'flags']
@@ -71,13 +72,13 @@ struct canfd_frame {
             [reserved uint 8 '0x0']
 //        ]
 //    ]
-    [reserved uint 8 '0x0']
-    [reserved uint 8 '0x0']
-    [implicit uint 8 'size' 'COUNT(data)']
+    [reserved uint 8 '0x0'] //flags
+    [reserved uint 8 '0x0'] // padding 1
+    [reserved uint 8 '0x0'] // padding 2
     [array int 8 'data' COUNT 'size']
 ]
 
-[type 'SocketCANFrame'
+[type 'SimplifiedSocketCANFrame'
     [simple bit 'extended']
     [simple bit 'remote']
     [simple bit 'error']
