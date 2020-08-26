@@ -52,10 +52,35 @@ struct canfd_frame {
 };
 */
 
+[type 'BrokenSocketCANFrame'
+    [discriminator bit 'extended']
+    [simple bit 'remote']
+    [simple bit 'error']
+    [simple bit 'extended']
+    [typeSwitch 'extended'
+        ['true' ExtendedSocketCANFrame
+            [simple uint 29 'identifier']
+        ]
+
+        ['false' StandardSocketCANFrame
+            [const  uint 18 '0x0']
+            [simple uint 11 'identifier']
+        ]
+    ]
+    [implicit uint 8 'size' 'COUNT(data)']
+    [reserved uint 8 '0x0'] // padding
+    [reserved uint 8 '0x0'] // reserved / padding
+    [reserved uint 8 '0x0'] // reserved / padding
+    [array int 8 'data' COUNT 'size']
+]
+
 [type 'SocketCANFrame'
     [simple int 32 'rawId']
+    [virtual int 32 'identifier'
+        'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.readIdentifier", rawId)'
+    ]
     [virtual bit 'extended'
-        'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isRemote", rawId)'
+        'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isExtended", rawId)'
     ]
     [virtual bit 'remote'
         'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isRemote", rawId)'
@@ -64,15 +89,21 @@ struct canfd_frame {
         'STATIC_CALL("org.apache.plc4x.java.can.helper.HeaderParser.isError", rawId)'
     ]
     [implicit uint 8 'size' 'COUNT(data)']
-//    [typeSwitch 'extended'
-//        ['true' ExtendedOtherSocketCanFrame
-//            [simple uint 8 'flags']
-//        ]
-//        ['false' ExtendedOtherSocketCanFrame
-            [reserved uint 8 '0x0']
-//        ]
-//    ]
     [reserved uint 8 '0x0'] //flags
+    [reserved uint 8 '0x0'] // padding 1
+    [reserved uint 8 '0x0'] // padding 2
+    [array int 8 'data' COUNT 'size']
+]
+
+[type 'SocketCAN20AFrame'
+    [simple int 16 'identifier']
+    [reserved int 8 '0x0'] // filling gap used by extended frame
+    [simple bit 'extended']
+    [simple bit 'remote']
+    [simple bit 'error']
+    [reserved int 5 '0x0']  // filling gap used by extended frame
+    [implicit uint 8 'size' 'COUNT(data)']
+    [reserved uint 8 '0x0'] // in case of fd frame these are flags
     [reserved uint 8 '0x0'] // padding 1
     [reserved uint 8 '0x0'] // padding 2
     [array int 8 'data' COUNT 'size']
@@ -83,9 +114,23 @@ struct canfd_frame {
     [simple bit 'remote']
     [simple bit 'error']
     [simple uint 29 'identifier']
-    [implicit uint 8 'length' 'COUNT(data)']
+    //implicit uint 8 'size' 'COUNT(data)'
     [reserved uint 8 '0x0'] // flags
     [reserved uint 8 '0x0'] // padding
     [reserved uint 8 '0x0'] // padding
-    [array int 8 'data' COUNT 'length']
+    //array int 8 'data' COUNT 'size'
+]
+
+[enum 'CanOpenNMTCommand'
+    ['0x01', START_DEVICE]
+    ['0x02', STOP_DEVICE]
+    ['0x80', PRE_START]
+    ['0x81', RESET_DEVICE]
+    ['0x82', RESET_COMMUNICATION]
+]
+
+[dataIo 'CANOpenFrame' [uint 4 'function', uint 7 nodeId, int 8 'data']
+    [discriminator uint 4 'afunction']
+    [typeSwitch 'afunction'
+    ]
 ]

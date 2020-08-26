@@ -2,7 +2,6 @@ package org.apache.plc4x.java.can.helper;
 
 import org.apache.plc4x.java.can.readwrite.SocketCANFrame;
 import org.apache.plc4x.java.spi.generation.ParseException;
-import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
 
 public class HeaderParser {
@@ -17,8 +16,7 @@ public class HeaderParser {
 
     public static final int EXTENDED_FORMAT_IDENTIFIER_MASK = 0x1fffffff;
 
-    public static int readIdentifier(ReadBuffer buffer) throws ParseException {
-        int identifier = buffer.readInt(32);
+    public static int readIdentifier(int identifier) {
         if ((identifier & EXTENDED_FORMAT_IDENTIFIER_MASK) == 0) {
             return identifier & STANDARD_FORMAT_IDENTIFIER_MASK;
         }

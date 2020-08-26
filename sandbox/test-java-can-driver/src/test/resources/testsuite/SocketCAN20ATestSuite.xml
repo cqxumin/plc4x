@@ -19,53 +19,50 @@
   -->
 <test:testsuite xmlns:test="https://plc4x.apache.org/schemas/parser-serializer-testsuite.xsd">
 
-  <name>CAN Standard Format Frame</name>
+  <name>Tests of socketcan/CAN 2.0A frames</name>
 
   <testcase>
     <name>Standard frame with 5 byte payload: 5A1#11.2233.44556677.88</name>
     <raw>a1050000080000001122334455667788</raw>
-    <root-type>SocketCANFrame</root-type>
+    <root-type>SocketCAN20AFrame</root-type>
     <xml>
-      <SocketCANFrame className="org.apache.plc4x.java.can.readwrite.SocketCANFrame">
-        <rawId>1441</rawId>
-        <data>ESIzRFVmd4g=</data>
+      <SocketCAN20AFrame className="org.apache.plc4x.java.can.readwrite.SocketCAN20AFrame">
         <identifier>1441</identifier>
         <extended>false</extended>
         <remote>false</remote>
         <error>false</error>
-      </SocketCANFrame>
+        <data>ESIzRFVmd4g=</data>
+      </SocketCAN20AFrame>
     </xml>
   </testcase>
 
   <testcase>
     <name>Standard frame with no payload: 5A1#</name>
     <raw>a105000000000000</raw>
-    <root-type>SocketCANFrame</root-type>
+    <root-type>SocketCAN20AFrame</root-type>
     <xml>
-      <SocketCANFrame className="org.apache.plc4x.java.can.readwrite.SocketCANFrame">
-        <rawId>1441</rawId>
-        <data></data>
+      <SocketCAN20AFrame className="org.apache.plc4x.java.can.readwrite.SocketCAN20AFrame">
         <identifier>1441</identifier>
         <extended>false</extended>
         <remote>false</remote>
         <error>false</error>
-      </SocketCANFrame>
+        <data></data>
+      </SocketCAN20AFrame>
     </xml>
   </testcase>
 
   <testcase>
     <name>Remote transmission request: 5A1#R</name>
     <raw>a105004000000000</raw>
-    <root-type>SocketCANFrame</root-type>
+    <root-type>SocketCAN20AFrame</root-type>
     <xml>
-      <SocketCANFrame className="org.apache.plc4x.java.can.readwrite.SocketCANFrame">
-        <rawId>1073743265</rawId>
-        <data></data>
+      <SocketCAN20AFrame className="org.apache.plc4x.java.can.readwrite.SocketCAN20AFrame">
         <identifier>1441</identifier>
         <extended>false</extended>
         <remote>true</remote>
         <error>false</error>
-      </SocketCANFrame>
+        <data></data>
+      </SocketCAN20AFrame>
     </xml>
   </testcase>
 
